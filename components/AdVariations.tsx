@@ -2,10 +2,30 @@ import React, { useState } from 'react'
 import { Share2, Heart, Eye, Users, ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 
-export function AdVariations({ variations, campaignId }) {
+interface AdVariation {
+  id: string
+  platform: string
+  content: string
+  image: string
+  visualStyle?: string
+  performance: {
+    views: number
+    likes: number
+    shares: number
+  }
+}
+
+interface AdVariationsProps {
+  variations: AdVariation[]
+  campaignId: string | null
+  onReset?: () => void
+  loading?: boolean
+}
+
+export function AdVariations({ variations, campaignId, onReset, loading }: AdVariationsProps) {
   const [postedVariations, setPostedVariations] = useState(new Set())
 
-  const handlePost = async (variationId) => {
+  const handlePost = async (variationId: string) => {
     // Simulate posting to social media
     setPostedVariations(prev => new Set([...prev, variationId]))
     
@@ -16,7 +36,7 @@ export function AdVariations({ variations, campaignId }) {
     console.log(`Posted variation ${variationId} to test account`)
   }
 
-  const getPlatformIcon = (platform) => {
+  const getPlatformIcon = (platform: string) => {
     switch (platform) {
       case 'tiktok': return '🎵'
       case 'instagram': return '📸'
@@ -24,7 +44,7 @@ export function AdVariations({ variations, campaignId }) {
     }
   }
 
-  const getPlatformColor = (platform) => {
+  const getPlatformColor = (platform: string) => {
     switch (platform) {
       case 'tiktok': return 'bg-pink-500'
       case 'instagram': return 'bg-gradient-to-r from-purple-500 to-pink-500'
@@ -58,7 +78,7 @@ export function AdVariations({ variations, campaignId }) {
             {/* Image */}
             <div className="aspect-square bg-gray-100">
               <img 
-                src={variation.imageUrl} 
+                src={variation.image} 
                 alt="Ad variation" 
                 className="w-full h-full object-cover"
               />
@@ -67,22 +87,22 @@ export function AdVariations({ variations, campaignId }) {
             {/* Copy */}
             <div className="p-lg">
               <p className="text-text-primary text-sm leading-relaxed mb-lg">
-                {variation.copy}
+                {variation.content}
               </p>
               
               {/* Engagement Stats */}
               <div className="flex items-center justify-between text-text-secondary text-sm mb-lg">
                 <div className="flex items-center space-x-xs">
                   <Heart className="w-4 h-4" />
-                  <span>{variation.engagement.likes}</span>
+                  <span>{variation.performance.likes}</span>
                 </div>
                 <div className="flex items-center space-x-xs">
                   <Eye className="w-4 h-4" />
-                  <span>{variation.engagement.views}</span>
+                  <span>{variation.performance.views}</span>
                 </div>
                 <div className="flex items-center space-x-xs">
                   <Share2 className="w-4 h-4" />
-                  <span>{variation.engagement.shares}</span>
+                  <span>{variation.performance.shares}</span>
                 </div>
               </div>
               

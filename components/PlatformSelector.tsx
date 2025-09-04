@@ -21,10 +21,15 @@ const platforms = [
   }
 ]
 
-export function PlatformSelector({ onPlatformSelection, selectedPlatforms }) {
-  const [selected, setSelected] = useState(selectedPlatforms)
+interface PlatformSelectorProps {
+  onPlatformSelection: (platforms: string[]) => void
+  selectedPlatforms: string[]
+}
 
-  const togglePlatform = (platformId) => {
+export function PlatformSelector({ onPlatformSelection, selectedPlatforms }: PlatformSelectorProps) {
+  const [selected, setSelected] = useState<string[]>(selectedPlatforms)
+
+  const togglePlatform = (platformId: string) => {
     const newSelected = selected.includes(platformId)
       ? selected.filter(id => id !== platformId)
       : [...selected, platformId]

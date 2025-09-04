@@ -1,22 +1,45 @@
 import React from 'react'
 import { TrendingUp, Users, Eye, Heart } from 'lucide-react'
 
-export function AnalyticsDashboard({ variations }) {
+interface AdVariation {
+  id: string
+  platform: string
+  content: string
+  image: string
+  performance: {
+    views: number
+    likes: number
+    shares: number
+  }
+}
+
+interface AnalyticsDashboardProps {
+  variations: AdVariation[]
+}
+
+export function AnalyticsDashboard({ variations }: AnalyticsDashboardProps) {
   if (!variations.length) return null
 
   // Calculate aggregated stats
-  const totalEngagement = variations.reduce((sum, v) => sum + v.engagement.likes + v.engagement.shares, 0)
-  const totalViews = variations.reduce((sum, v) => sum + v.engagement.views, 0)
+  const totalEngagement = variations.reduce((sum, v) => sum + v.performance.likes + v.performance.shares, 0)
+  const totalViews = variations.reduce((sum, v) => sum + v.performance.views, 0)
   const avgEngagementRate = ((totalEngagement / totalViews) * 100).toFixed(2)
 
   // Find best performing variation
   const bestPerforming = variations.reduce((best, current) => {
-    const currentScore = current.engagement.likes + current.engagement.shares
-    const bestScore = best.engagement.likes + best.engagement.shares
+    const currentScore = current.performance.likes + current.performance.shares
+    const bestScore = best.performance.likes + best.performance.shares
     return currentScore > bestScore ? current : best
   })
 
-  const platformStats = variations.reduce((acc, variation) => {
+  interface PlatformStats {
+    variations: number
+    totalLikes: number
+    totalViews: number
+    totalShares: number
+  }
+
+  const platformStats = variations.reduce((acc: Record<string, PlatformStats>, variation) => {
     if (!acc[variation.platform]) {
       acc[variation.platform] = {
         variations: 0,
@@ -26,9 +49,9 @@ export function AnalyticsDashboard({ variations }) {
       }
     }
     acc[variation.platform].variations += 1
-    acc[variation.platform].totalLikes += variation.engagement.likes
-    acc[variation.platform].totalViews += variation.engagement.views
-    acc[variation.platform].totalShares += variation.engagement.shares
+    acc[variation.platform].totalLikes += variation.performance.likes
+    acc[variation.platform].totalViews += variation.performance.views
+    acc[variation.platform].totalShares += variation.performance.shares
     return acc
   }, {})
 
@@ -58,7 +81,7 @@ export function AnalyticsDashboard({ variations }) {
             <Heart className="w-6 h-6 text-red-500" />
           </div>
           <div className="text-2xl font-bold text-text-primary">
-            {variations.reduce((sum, v) => sum + v.engagement.likes, 0).toLocaleString()}
+            {variations.reduce((sum, v) => sum + v.performance.likes, 0).toLocaleString()}
           </div>
           <div className="text-sm text-text-secondary">Total Likes</div>
         </div>
@@ -109,7 +132,7 @@ export function AnalyticsDashboard({ variations }) {
           <h3 className="text-xl font-bold text-text-primary mb-lg">Top Performer</h3>
           <div className="flex items-start space-x-md">
             <img 
-              src={bestPerforming.imageUrl} 
+              src={bestPerforming.image} 
               alt="Best performing ad" 
               className="w-20 h-20 object-cover rounded-lg"
             />
@@ -118,12 +141,12 @@ export function AnalyticsDashboard({ variations }) {
                 {bestPerforming.platform}
               </div>
               <div className="text-sm text-text-secondary mb-md line-clamp-2">
-                {bestPerforming.copy.substring(0, 100)}...
+                {bestPerforming.content.substring(0, 100)}...
               </div>
               <div className="flex space-x-lg text-sm">
-                <span className="text-red-500">{bestPerforming.engagement.likes} likes</span>
-                <span className="text-blue-500">{bestPerforming.engagement.views} views</span>
-                <span className="text-green-500">{bestPerforming.engagement.shares} shares</span>
+                <span className="text-red-500">{bestPerforming.performance.likes} likes</span>
+                <span className="text-blue-500">{bestPerforming.performance.views} views</span>
+                <span className="text-green-500">{bestPerforming.performance.shares} shares</span>
               </div>
             </div>
           </div>

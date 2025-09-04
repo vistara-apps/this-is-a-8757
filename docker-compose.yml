@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Frontend (React + Vite)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3001/api
+      - VITE_STRIPE_PUBLISHABLE_KEY=${VITE_STRIPE_PUBLISHABLE_KEY}
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - ad-remix-network
+
+  # Backend (Node.js + Express)
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=http://localhost:5173
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - ad-remix-network
+
+networks:
+  ad-remix-network:
+    driver: bridge
+
+volumes:
+  node_modules_frontend:
+  node_modules_backend:

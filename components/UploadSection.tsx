@@ -2,12 +2,16 @@ import React, { useRef, useState } from 'react'
 import { Upload, Image as ImageIcon } from 'lucide-react'
 import clsx from 'clsx'
 
-export function UploadSection({ onImageUpload }) {
-  const fileInputRef = useRef(null)
-  const [dragActive, setDragActive] = useState(false)
-  const [preview, setPreview] = useState(null)
+interface UploadSectionProps {
+  onImageUpload: (file: File) => void
+}
 
-  const handleFileSelect = (file) => {
+export function UploadSection({ onImageUpload }: UploadSectionProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [dragActive, setDragActive] = useState(false)
+  const [preview, setPreview] = useState<string | null>(null)
+
+  const handleFileSelect = (file: File) => {
     if (file && file.type.startsWith('image/')) {
       const previewUrl = URL.createObjectURL(file)
       setPreview(previewUrl)
@@ -15,7 +19,7 @@ export function UploadSection({ onImageUpload }) {
     }
   }
 
-  const handleDrag = (e) => {
+  const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     if (e.type === 'dragenter' || e.type === 'dragover') {
@@ -25,7 +29,7 @@ export function UploadSection({ onImageUpload }) {
     }
   }
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
@@ -35,7 +39,7 @@ export function UploadSection({ onImageUpload }) {
     }
   }
 
-  const handleFileInput = (e) => {
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       handleFileSelect(e.target.files[0])
     }
