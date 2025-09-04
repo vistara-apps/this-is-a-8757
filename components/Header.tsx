@@ -1,7 +1,11 @@
 import React from 'react'
 import { Sparkles, RotateCcw } from 'lucide-react'
 
-export function Header({ onReset }) {
+interface HeaderProps {
+  onReset?: () => void
+}
+
+export function Header({ onReset }: HeaderProps) {
   return (
     <header className="bg-surface bg-opacity-20 backdrop-blur-md border-b border-surface border-opacity-20">
       <div className="container mx-auto max-w-5xl px-5 py-lg">

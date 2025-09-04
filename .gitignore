@@ -10,3 +10,10 @@ dist
 coverage
 .nyc_output
 .env.production
+
+# Next.js
+.next/
+out/
+
+# Build artifacts
+build/

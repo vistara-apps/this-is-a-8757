@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 import { X, CreditCard } from 'lucide-react'
 
-export function PaymentModal({ onSuccess, onClose }) {
+interface PaymentModalProps {
+  onSuccess: () => void
+  onClose: () => void
+  amount?: number
+}
+
+export function PaymentModal({ onSuccess, onClose, amount }: PaymentModalProps) {
   const [processing, setProcessing] = useState(false)
 
   const handlePayment = async () => {
